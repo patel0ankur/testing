@@ -1,0 +1,19 @@
+---
+-
+  hosts: docker_manager
+  #gather_facts: true
+  become_user: root
+
+  tasks:
+    - name: "show all the hosts"
+      #debug: var=hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address']
+      #debug: var=hostvars[inventory_hostname]['groups']['docker_manager'][0]
+      debug: var=hostvars[groups['docker_manager']][0]
+
+#hostvars[groups['masters'][0]]['worker_token']['stdout']
+      #['worker_token']['stdout']
+      #debug: var=hostvars[inventory_hostname]
+      #debug: var=hostvars[inventory_hostname]['ansible_enp0s8']
+      #debug: var=inventory_hostname
+      #debug: var=ansible_hostname
+      #debug: var=hostvars

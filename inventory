@@ -1,0 +1,5 @@
+[docker_slave]
+172.28.128.6
+
+[docker_manager]
+172.28.128.8
