@@ -1,0 +1,60 @@
+curl -LO "https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz"
+tar -xvzf node_exporter-0.17.0.linux-amd64.tar.gz
+rm -rf node_exporter-0.17.0.linux-amd64.tar.gz
+cd node_exporter-0.17.0.linux-amd64/
+
+
+useradd node_exporter -s /sbin/nologin
+cp node_exporter /usr/sbin/
+vi /etc/systemd/system/node_exporter.service
+======
+[Unit]
+Description=Node Exporter
+
+[Service]
+User=node_exporter
+EnvironmentFile=/etc/sysconfig/node_exporter
+ExecStart=/usr/sbin/node_exporter $OPTIONS
+[Install]
+WantedBy=multi-user.target
+========
+mkdir -p /etc/sysconfig
+touch /etc/sysconfig/node_exporter
+/usr/sbin/node_exporter --help
+sudo systemctl daemon-reload
+sudo systemctl enable node_exporter
+systemctl start node_exporter
+curl http://localhost:9100/metrics
+
+Add node to prometheus server: 
+vi prometheus.yml
+=======
+scrape_configs:
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['xxx.xxx.xxx.xxx:9100']
+=======
+Restart prometheus Server
+nohup ./prometheus > prometheus.log 2>&1 &
+tail -f prometheus.log
+-------------------------------------------- Add Docker Metrics--------------------------------
+{
+  "metrics-addr" : "xxx.xxx.xxx.xxx:9323",
+  "experimental" : true
+}
+
+Add node to prometheus server: 
+vi prometheus.yml
+=======
+scrape_configs:
+  - job_name: 'docker_images'
+    static_configs:
+      - targets: ['xxx.xxx.xxx.xxx:9323']
+=======
+
+
+
+
+
+
+
