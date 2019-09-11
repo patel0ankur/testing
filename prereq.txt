@@ -1,0 +1,117 @@
+openssl rand -base64 12 | docker secret create db_root_password -
+openssl rand -base64 12 | docker secret create db_dba_password -
+
+
+create database testdb;
+grant all on testdb.* to 'testuser' identified by 'password';
+
+
+use testdb;
+create table customers (customer_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, first_name TEXT, last_name TEXT);
+
+
+sudo useradd jenkins -U -s /bin/bash
+sudo passwd jenkins
+jenkins        ALL=(ALL)       NOPASSWD: ALL
+ssh-keygen -t rsa
+cat /var/lib/jenkins/.ssh/id_rsa.pub | ssh jenkins@172.28.128.6 "mkdir -p /home/jenkins/.ssh && cat >>  /home/jenkins/.ssh/authorized_keys" 
+chmod 700 /home/jenkins/.ssh 
+chmod 640 /home/jenkins/.ssh/authorized_keys 
+
+172.28.128.6 manager
+172.28.128.7 jenkins
+172.28.128.8 worker01 
+
+yum install java-1.8.0-openjdk
+yum install java-1.8.0-openjdk-devel
+pip install --upgrade pip
+sudo yum install python-pip
+yum install python-devel mysql-devel
+pip install Flask-MySQLdb
+pip install flask
+
+
+docker login --username=ankurpatel
+docker tag 740f0a8b5bf6 ankurpatel/flaskapp:latest
+
+docker push ankurpatel/flaskapp
+
+
+docker service logs -f flask_app
+
+
+docker stack ls
+
+docker stack deploy --compose-file docker-compose.yml flask
+
+Login to Jenkins 
+
+Goto Manage Jenkins >> Configure Global Security >> CSRF Protection
+
+Disable “Prevent Cross Site Request Forgery exploits”
+
+Click on Save
+
+
+
+
+
+Install anisble
+create root user and passwd
+copy id_rsa.pub for passwordless authentication
+
+Install jenkins using ansible
+
+
+sudo yum install java-1.8.0-openjdk-devel
+curl --silent --location http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo | sudo tee /etc/yum.repos.d/jenkins.repo
+sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+sudo yum install jenkins
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+
+yum install -y yum-utils device-mapper-persistent-data lvm2
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+yum install docker-ce docker-ce-cli containerd.io
+systemctl start docker
+
+
+https://download.docker.com/linux/centos/gpg
+
+
+docker swarm init --advertise-addr 192.168.99.121
+
+docker swarm join --token  SWMTKN-1-5hp3t5ftu5i47vxogn9ph8xcnqupq2mqxqndi8eyxciekdwmfz-epwwvq6ovibp2p2umnml92qw8 192.168.99.100:2377
+
+  
+  
+
+  
+  
+vars:
+      token: "{{ hostvars[groups['masters'][0]]['worker_token']['stdout'] }}"
+      master: "{{ hostvars[groups['masters'][0]]['inventory_hostname'] }}"
+    tasks:
+      - name: Join Swarm Cluster as a Worker
+        command: docker swarm join --token {{ token }} {{ master }}:2377
+        register: worker
+
+      - name: Show Results
+        debug: var=worker.stdout
+
+      - name: Show Errors
+        debug: var=worker.stderr
+		
+
+name: "join as a worker"
+shell: "docker swarm join --token {{ hostvars['manager1']['worker_token']['stdout'] }} {{ hostvars['manager1']['ansible_eth0']['ipv4']['address'] }}:2377"
+when: "docker_info.stdout.find('Swarm: inactive') != -1"
+retries: 3
+delay: 20
+
+shell: "docker swarm join --token {{ hostvars['swarm-manager']['worker_token']['stdout'] }} {{ hostvars['swarm-manager']['ansible_default_ipv4']['address'] }}:2377"
+  tags: swarm
+
+
+
