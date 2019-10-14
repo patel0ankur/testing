@@ -1,0 +1,94 @@
+update below in all the nodes:
+vi /etc/sysconfig/kubelet
+KUBELET_EXTRA_ARGS=--node-ip=172.28.128.9
+kubeadm init --apiserver-advertise-address=172.28.128.9 --pod-network-cidr=172.28.128.0/16
+
+
+
+echo -n "root_password" | base64
+cm9vdF9wYXNzd29yZA==
+
+
+Create Secret yaml
+kubectl apply -f secret.yml
+kubectl get secret
+
+Create Persistent Storage yaml
+kubectl apply -f persistentVolumeClaim.yaml
+kubectl get persistentvolumeclaim mysql-data-disk
+
+POD=`kubectl get pods -l app=mysql | grep Running | grep 1/1 | awk '{print $1}'`
+kubectl exec -it $POD -- mysql -u root -p 
+kubectl exec -it mysql-7fb89f7467-p2nsx -- /bin/bash
+
+
+Print ENV of POD: 
+kubectl exec mysql-67669fc895-2qccd -- printenv
+
+kubectl delete service,pvc,pv,pods -l app=mysql
+
+kubectl create -f PersistentVolumeClaim.yml
+kubectl create -f PersistentVolume.yml
+kubectl create -f mysql_service.yml
+kubectl create -f mysql_deployment.yml
+
+
+kubectl create -f flask_service.yml
+kubectl create -f flaskapp_deployment.yml
+
+
+
+
+kubectl get pods -l app=mysql
+kubectl get pods -o wide
+kubectl describe pod mysql
+kubectl logs 
+kubectl get pod -l service=mysql -o jsonpath="{.items[0].metadata.name}
+
+kubectl delete deployment,svc mysql
+kubectl delete pvc mysql-pvc
+kubectl delete pv mysql-pv
+kubectl delete deployment,svc flaskapp
+
+kubectl delete --all pods --namespace=kubernetes-dashboard
+
+
+docker build -t ankurpatel/kubedb .
+docker run -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=password -d ankurpatel/kubedb
+docker run -p 3306:3306 --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -d ankurpatel/kubedb
+
+
+docker build -t ankurpatel/kubeapp:v1 .
+
+docker pull ankurpatel/kubedb
+docker push ankurpatel/kubedb:v2
+
+
+kubectl describe deployments
+kubectl get deploy
+kubectl rollout history deploy/mysql
+
+
+kubectl get svc flaskapp -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+
+New Deployment: 
+kubectl describe deployments
+kubectl get deploy
+kubectl rollout history deploy/mysql
+
+
+1. Update deployment file and run
+kubectl apply -f mysql_deployment.yml
+
+2. Rolling Update
+
+readinessProbe:
+          exec:
+            # Check we can execute queries over TCP (skip-networking is off).
+            command: ["mysql", "-h", "127.0.0.1", "-e", "SELECT 1"]
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+		  
+		  
