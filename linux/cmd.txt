@@ -1,0 +1,22 @@
+for i in {1..5}; do COMMAND-HERE; done
+
+for((i=1;i<=10;i+=2)); do echo "Welcome $i times"; done
+
+for i in *; do echo $i; done
+
+for i in /etc/*.conf; do cp $i /backup; done
+
+cat ver.txt | while read LINE; do docker build -t imagename:$LINE . ; done
+
+sh -c 'yum update && yum install nginx'
+
+
+Find most used command:
+history | awk '{print $2}' | sort|uniq -c|sort -nr|head -15
+
+Create files of specific permissions:
+install -m 775 /tmp/test.txt
+
+
+COMMAND="mkdir build && cd build && touch blank.txt"
+eval ${COMMAND}
